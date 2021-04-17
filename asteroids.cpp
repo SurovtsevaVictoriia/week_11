@@ -14,7 +14,7 @@ float DEGTORAD = 0.017453f;
 
 int score_multiplier = 100;
 //numbers 
-int n_Heart    =        1;
+int n_Heart    =        10;
 int n_Entities =        15;
 int n_Rock_small =      2;
 
@@ -66,6 +66,8 @@ public:
     }
 
 
+
+
     void update()
     {
         Frame += speed;
@@ -89,7 +91,7 @@ public:
           dx, dy, 
           R, angle;
 
-    int hearts = 0;;
+   
     bool  life;
     std::string name;
     Animation anim;
@@ -222,10 +224,8 @@ class player : public Entity
 public:
     bool thrust;
     
-
     player(){
         name = "player";
-        hearts = n_Heart;
     }
 
     void update()
@@ -253,12 +253,7 @@ public:
         move();
     }
 
-  
-
-    
-
 };
-
 
 bool isCollide(Entity* a, Entity* b)
 {
@@ -268,16 +263,66 @@ bool isCollide(Entity* a, Entity* b)
 }
 
 
+class Heart_Board {
+
+public:
+
+    int heart_size = 64;
+   
+    std::vector<Sprite*> sprites;
+    std::vector<IntRect> frames;
+
+
+    Heart_Board(Texture& t) {
+
+        for (int i = 0; i < 2; i++)
+            frames.push_back(IntRect(0 + i * heart_size, 0, heart_size, heart_size));
+
+        for (int i = 0; i < n_Heart; ++i) {
+
+            Sprite* sprite = new Sprite;
+            sprites.push_back(sprite);
+
+            sprites[i]->setOrigin(heart_size / 2, heart_size / 2);
+            sprites[i]->setTexture(t);           
+            sprites[i]->setTextureRect(frames[0]);
+            sprites[i]->setPosition(W - i * heart_size - 40, 40);
+        }
+
+         
+    };
+
+   
+
+    void update(int Hearts) {
+        for (int i = 0; i < n_Heart; i++) {
+            if (i < Hearts) {
+                sprites[i]->setTextureRect(frames[0]);
+            }
+            else { sprites[i]->setTextureRect(frames[1]); }
+
+        }
+    }
+
+    void draw(sf::RenderWindow& app) {
+        for (int i = 0; i < n_Heart; i++) {
+            app.draw(*sprites[i]);
+        }
+    }
+    
+
+};
+class Score_Board {};
 
 int main()
 {
-   
+    int Hearts = n_Heart;
     int Score = 0;
 
     RenderWindow app(VideoMode(W, H), "Asteroids!");
     app.setFramerateLimit(60);
 
-    Texture t1, t2, t3, t4, t5, t6, t7,tds;
+    Texture t1, t2, t3, t4, t5, t6, t7, th;
     t1.loadFromFile("images/spaceship.png");
     t2.loadFromFile("images/background.jpg");
     t3.loadFromFile("images/explosions/type_C.png");
@@ -285,11 +330,13 @@ int main()
     t5.loadFromFile("images/fire_blue.png");
     t6.loadFromFile("images/rock_small.png");
     t7.loadFromFile("images/explosions/type_B.png");
-    
+    th.loadFromFile("images/hearts.png");
+
     t1.setSmooth(true);
     t2.setSmooth(true);
 
     Sprite background(t2);
+    Heart_Board heart_board(th);
 
     Animation sExplosion(t3, 0, 0, 256, 256, 48, 0.5);
     Animation sRock(t4, 0, 0, 64, 64, 16, 0.2);
@@ -367,7 +414,7 @@ int main()
                     if (isCollide(a, b))
                     {
                         b->life = false;
-                        a->hearts--;
+                        Hearts--;
 
                         Entity* e = new Entity();
                         e->settings(sExplosion_ship, a->x, a->y);
@@ -375,7 +422,7 @@ int main()
                         entities.push_back(e);
 
 
-                        if (p->hearts > 0) {
+                        if (Hearts > 0) {
                             p->settings(sPlayer, W / 2, H / 2, 0, 20);
                             p->dx = 0; p->dy = 0;
                         }
@@ -413,9 +460,12 @@ int main()
             else i++;
         }
 
+        heart_board.update(Hearts);
+
         //////draw//////
         app.draw(background);
         for (auto i : entities) i->draw(app);
+        heart_board.draw(app);
         app.display();
     }
 
