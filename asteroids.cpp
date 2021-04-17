@@ -2,6 +2,9 @@
 #include <time.h>
 #include <list>
 #include <random>
+#include<String>
+
+
 using namespace sf;
 
 //width of window
@@ -14,7 +17,7 @@ float DEGTORAD = 0.017453f;
 
 int score_multiplier = 100;
 //numbers 
-int n_Heart    =        10;
+int n_Heart    =        5;
 int n_Entities =        15;
 int n_Rock_small =      2;
 
@@ -312,7 +315,37 @@ public:
     
 
 };
-class Score_Board {};
+
+class Score_Board {
+public:
+    Text text;
+    int value;
+    Font font;
+
+   
+    Score_Board() { // Declare and load a font
+       
+        value = 0;
+        font.loadFromFile("arial.ttf");
+        // Create a text
+        sf::Text text(std::to_string(value), font);
+        text.setPosition(10, 10);
+        text.setCharacterSize(10);
+        //text.setFillColor(sf::Color::Red);
+        // Draw it
+    }
+    void update(int Score) {
+
+        value = Score;
+        text.setString(std::to_string(value));
+    }
+    void draw(sf::RenderWindow& app) {
+        app.draw(text);
+    }
+
+};
+ 
+
 
 int main()
 {
@@ -337,6 +370,7 @@ int main()
 
     Sprite background(t2);
     Heart_Board heart_board(th);
+    Score_Board score_board;
 
     Animation sExplosion(t3, 0, 0, 256, 256, 48, 0.5);
     Animation sRock(t4, 0, 0, 64, 64, 16, 0.2);
@@ -461,11 +495,15 @@ int main()
         }
 
         heart_board.update(Hearts);
+        score_board.update(Score);
 
         //////draw//////
         app.draw(background);
         for (auto i : entities) i->draw(app);
+
         heart_board.draw(app);
+        score_board.draw(app);
+
         app.display();
     }
 
