@@ -24,11 +24,15 @@ int n_Rock_small =      2;
 //velocities
 int   v_Bullet =        6;
 float v_Player_rot =    0.2;
-float v_Player_accel =  0.9;
+float v_Player_accel =  0.99;
 int   v_Player_max =    15;
 //angles
 int a_Player_rot = 3;
 
+//radiuses
+int r_small = 15;
+int r_big = 25;
+int r_player = 20;
 //returns mersenne()
 int f_rand() {
 
@@ -130,6 +134,13 @@ public:
         anim.sprite.setPosition(x, y);
         anim.sprite.setRotation(angle + 90);
         app.draw(anim.sprite);
+
+        //hitbox
+        CircleShape circle(R);
+        circle.setFillColor(Color(255, 0, 0, 170));
+        circle.setPosition(x, y);
+        circle.setOrigin(R, R);
+        //app.draw(circle);
 
     }
 
@@ -393,16 +404,16 @@ int main()
    
 
     std::list<Entity*> entities;
-
+    //initial spawn
     for (int i = 0;i < n_Entities ;i++)
     {
         asteroid* a = new asteroid();
-        a->settings(sRock, f_rand() % W, f_rand() % H, f_rand() % 360, 25);
+        a->settings(sRock, f_rand() % W, f_rand() % H, f_rand() % 360, r_big);
         entities.push_back(a);
     }
 
     player* p = new player();
-    p->settings(sPlayer, 200, 200, 0, 20);
+    p->settings(sPlayer, 200, 200, 0, r_player);
     entities.push_back(p);
 
     /////main loop/////
@@ -434,8 +445,12 @@ int main()
             {
                 if (a->name == "asteroid" && b->name == "bullet")
                     if (isCollide(a, b))
-                    {
-                        Score += score_multiplier;
+                    {   
+                        if (a->R == r_small) {
+                            Score += 0.5*score_multiplier;
+                        }
+                        else{ Score += score_multiplier; }
+
                         a->life = false;
                         b->life = false;
 
@@ -447,9 +462,9 @@ int main()
 
                         for (int i = 0;i < n_Rock_small; i++)
                         {
-                            if (a->R == 15) continue;
+                            if (a->R == r_small) continue;
                             Entity* e = new asteroid();
-                            e->settings(sRock_small, a->x, a->y, f_rand() % 360, 15);
+                            e->settings(sRock_small, a->x, a->y, f_rand() % 360, r_small);
                             entities.push_back(e);
                         }
 
@@ -468,7 +483,7 @@ int main()
 
 
                         if (Hearts > 0) {
-                            p->settings(sPlayer, W / 2, H / 2, 0, 20);
+                            p->settings(sPlayer, W / 2, H / 2, 0, r_player);
                             p->dx = 0; p->dy = 0;
                         }
                         else {
@@ -490,7 +505,7 @@ int main()
         if (f_rand() % 150 == 0)
         {
             asteroid* a = new asteroid();
-            a->settings(sRock, 0, f_rand() % H, f_rand() % 360, 25);
+            a->settings(sRock, 0, f_rand() % H, f_rand() % 360, r_big);
             entities.push_back(a);
         }
 
