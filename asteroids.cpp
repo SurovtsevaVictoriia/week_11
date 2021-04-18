@@ -151,15 +151,15 @@ void death(sf::RenderWindow& app, Event event, std::list<Entity*> & entities, Sp
     entities.erase(range_begin, range_end);
 
     Texture tds;
-    Animation sDeath_Screen(tds, 0, 0, 64, 64, 16, 0.2);
+    Animation sDeath_Screen(tds, 0, 0, 200, 800, 16, 0.2);
     tds.loadFromFile("images/death_screen.png");
 
 
     Death_Screen* a = new Death_Screen();
-    a->settings(sDeath_Screen, W/2, H/2, 270, 25);
+    a->settings(sDeath_Screen, W/2, H/2, 180, 25);
 
   
-
+    
 
     while (app.isOpen())
     {
@@ -324,8 +324,8 @@ public:
    
     Score_Board() { // Declare and load a font
        
-        rectangle.setSize(sf::Vector2f(100, 50));
-        rectangle.setOutlineColor(sf::Color::Red);
+        rectangle.setSize(sf::Vector2f(70, 30));
+        rectangle.setOutlineColor(sf::Color::Black);
         rectangle.setOutlineThickness(5);
         rectangle.setPosition(10, 20);
 
