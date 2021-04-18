@@ -313,35 +313,46 @@ public:
         }
     }
     
-
+    ~Heart_Board() {};
 };
 
 class Score_Board {
 public:
     Text text;
-    int value;
     Font font;
-
+    RectangleShape rectangle;
    
     Score_Board() { // Declare and load a font
        
-        value = 0;
-        font.loadFromFile("arial.ttf");
-        // Create a text
-        sf::Text text(std::to_string(value), font);
-        text.setPosition(10, 10);
-        text.setCharacterSize(10);
-        //text.setFillColor(sf::Color::Red);
+        rectangle.setSize(sf::Vector2f(100, 50));
+        rectangle.setOutlineColor(sf::Color::Red);
+        rectangle.setOutlineThickness(5);
+        rectangle.setPosition(10, 20);
+
+
+       
+        font.loadFromFile("images/Arial.ttf");
+       // Create a text
+       
+        text.setString(std::to_string(0));
+        text.setFont(font);
+        text.setPosition(20, 20);
+        text.setCharacterSize(24);
+        text.setFillColor(sf::Color::Black);
+        text.setOutlineColor(sf::Color::Black);
         // Draw it
     }
+
     void update(int Score) {
 
-        value = Score;
-        text.setString(std::to_string(value));
+        text.setString(std::to_string(Score));
     }
     void draw(sf::RenderWindow& app) {
+        app.draw(rectangle);
         app.draw(text);
     }
+
+    ~Score_Board() {};
 
 };
  
@@ -503,6 +514,7 @@ int main()
 
         heart_board.draw(app);
         score_board.draw(app);
+        //app.draw(score_board.text);
 
         app.display();
     }
